@@ -1,6 +1,7 @@
 import {v2 as cloudinary} from 'cloudinary';
 import { ApiError } from './ApiError.js'
-
+import fs from 'fs'
+import "dotenv/config.js"
 
 
 cloudinary.config({ 
@@ -12,15 +13,17 @@ cloudinary.config({
 
 const uploadToCloudinary = async (file) => {
     try {
-        const uploadResult = await cloudinary.uploader.upload("https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg", {
-            public_id: "shoes"
+        const uploadResult = await cloudinary.uploader.upload(file, {
+            resource_type:'auto'
         })
         return {
             url:uploadResult.url,
             public_id:uploadResult.public_id
         }
     } catch (error) {
-        throw new ApiError(error?.statusCode | 501, error?.message | "Error while uploading to the cloudinary")
+        throw new ApiError(error?.status || 501, error?.message || "Error while uploading to the cloudinary")
+    } finally{
+        fs.unlinkSync(file)
     }
 }
 
@@ -28,7 +31,7 @@ const deleteFromCloudinary = async (file) => {
     try {
         await cloudinary.uploader.destroy(file.public_id)
     } catch (error) {
-        throw new ApiError( error?.statusCode | 501, error?.message | "Error while deleting file on cloudinary")
+        throw new ApiError( error?.statusCode || 501, error?.message || "Error while deleting file on cloudinary")
     }
 }
 

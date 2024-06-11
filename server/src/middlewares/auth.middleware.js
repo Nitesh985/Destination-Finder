@@ -1,6 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from '../model/user.model.js'
+import "dotenv/config.js"
 import jwt from 'jsonwebtoken'
 
 
@@ -11,13 +12,13 @@ export const verifyUser = asyncHandler(async (req, res, next)=>{
         throw new ApiError(403, "Access Token Not Found")
     }    
 
-    const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, function (err){
-        if (err){
-            throw new ApiError(403, err.message)
-        }
-    })
+    const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
 
-    const user = await User.findById(decoded._id)
+    if (!decoded){
+        throw new ApiError(403, "Acesss Token Expired!")
+    }
+
+    const user = await User.findById(decoded?._id)
     req.user = user
 
     next()
