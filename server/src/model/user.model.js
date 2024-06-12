@@ -21,6 +21,10 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
+    location:{
+      type: String,
+      required: true
+    },
     avatar: {
       type: Object,
     },

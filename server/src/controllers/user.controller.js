@@ -35,7 +35,7 @@ const testResponse = asyncHandler(async (req, res)=> {
 
 
 const registerUser = asyncHandler(async (req, res)=> {
-    const {username, password, email} = req.body
+    const {username, password, email, location} = req.body
 
     const reqFields = ["username", "password", "email"]
 
@@ -68,7 +68,8 @@ const registerUser = asyncHandler(async (req, res)=> {
         username,
         email:email.toLowerCase(),
         password,
-        avatar
+        avatar,
+        location
     })
 
 
